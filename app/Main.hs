@@ -11,7 +11,7 @@ main = do
     let singlewords = words contents
         list = wordsToInts singlewords
     print list
-    let result = fuelForShip list
+    let result = allFuelForShip list
     print result
     hClose handle   
 
