@@ -14,8 +14,8 @@ data Result = Result {
 
 data Instruction = Instruction {
     opcode :: Opcode,
-    firstVal :: Int,
-    secondVal :: Int,
+    firstLocation :: Int,
+    secondLocation :: Int,
     location :: Int
 } deriving (Show)
 
@@ -28,20 +28,23 @@ runProgramHelper program pos 99 = program
 runProgramHelper program pos currentOpcode = runProgramHelper updatedProgram newPos (program !! newPos)
         where 
             currentInstruction = parseInstruction [program !! pos, program !! (pos+1), program !! (pos+2), program !! (pos+3)]
-            updatedProgram = updateProgram program (computeInstruction currentInstruction)
+            updatedProgram = updateProgram program (computeInstruction currentInstruction program)
             newPos = pos+4
 
 -- Process actionable instructions
-computeInstruction :: Instruction -> Result
-computeInstruction instruction 
-        | opcode instruction == Add = Result ((firstVal instruction)+(secondVal instruction)) (location instruction)
-        | opcode instruction == Multiply = Result ((firstVal instruction)*(secondVal instruction)) (location instruction)
+computeInstruction :: Instruction -> Program -> Result
+computeInstruction instruction program
+        | opcode instruction == Add = Result (firstVal+secondVal) (location instruction)
+        | opcode instruction == Multiply = Result (firstVal*secondVal) (location instruction)
+        where
+            firstVal = program !! (firstLocation instruction)
+            secondVal = program !! (secondLocation instruction)
 
 -- todo: deal nicely with End opcode 99
 parseInstruction :: [Int] -> Instruction
-parseInstruction (opcode:firstVal:secondVal:location:rest) 
-    | opcode == 1 = Instruction Add firstVal secondVal location
-    | opcode == 2 = Instruction Multiply firstVal secondVal location
+parseInstruction (opcode:firstLocation:secondLocation:location:rest) 
+    | opcode == 1 = Instruction Add firstLocation secondLocation location
+    | opcode == 2 = Instruction Multiply firstLocation secondLocation location
 parseInstruction (opcode:rest) 
     | opcode == 99 = Instruction End 0 0 0
 
