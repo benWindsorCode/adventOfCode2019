@@ -23,7 +23,6 @@ runProgram :: Program -> Program
 runProgram program = runProgramHelper program 0 (program !! 0)
 
 -- Given a program and current position and current opcode, then execute instruction and continue
--- todo: implement exit condition
 runProgramHelper :: Program -> Int -> Int -> Program
 runProgramHelper program pos 99 = program
 runProgramHelper program pos currentOpcode = runProgramHelper updatedProgram newPos (program !! newPos)
