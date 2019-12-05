@@ -16,6 +16,7 @@ data Coordinate = Coordinate Int Int deriving (Show, Eq, Ord)
 
 type Path = [Coordinate]
 
+-- This will calculate the part one solution of min dist to intersection from origin
 calculateSolution :: (String, String) -> Int
 calculateSolution inputStrings = shortestDist crosses
     where
@@ -23,6 +24,11 @@ calculateSolution inputStrings = shortestDist crosses
         firstPath = fst paths
         secondPath = snd paths
         crosses = filter (\coord -> not (coord == (Coordinate 0 0))) (crossPoints firstPath secondPath)
+
+-- This will calculate part two solution of min length along wires to an intersection point
+calculateSolution2 :: (String, String) -> Int
+calculateSolution2 inputStrings = minTravelToIntersection paths
+    where paths = parseInput inputStrings 
 
 parseInput :: (String, String) -> (Path, Path)
 parseInput (first, second) = (pathFromOrigin moves1, pathFromOrigin moves2)
@@ -35,6 +41,20 @@ parseMove inputString = Move (read firstChar :: Direction) (read rest :: Int)
         where
             firstChar = [head inputString]
             rest = tail inputString
+
+minTravelToIntersection :: (Path, Path) -> Int
+minTravelToIntersection (path1, path2) = foldr1 min distances
+    where
+        crosses = filter (\coord -> not (coord == (Coordinate 0 0))) (crossPoints path1 path2)
+        distances = [totalDistanceAlongWires (path1, path2) x | x <- crosses]
+
+-- Given two wires and a point on them both, total the distance each wire will take
+totalDistanceAlongWires :: (Path, Path) -> Coordinate -> Int
+totalDistanceAlongWires (path1, path2) coord = (distanceToPoint path1 coord) + (distanceToPoint path2 coord)
+
+-- Given a path and a point on that path, calculate how far along the path you have to go to get to that point
+distanceToPoint :: Path -> Coordinate -> Int
+distanceToPoint path coord = Prelude.length $ takeWhile (/= coord) path
 
 shortestDist :: [Coordinate] -> Int
 shortestDist coords = foldr1 min distances
