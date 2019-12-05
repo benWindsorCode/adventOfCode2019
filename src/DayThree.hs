@@ -3,6 +3,7 @@ module DayThree
     ) where
 
 import Data.List.Split
+import Data.Set (Set, fromList, elems, intersection)
 
 data Direction = U | D | L | R deriving (Show, Eq, Read)
 
@@ -40,7 +41,7 @@ shortestDist coords = foldr1 min distances
         where distances = map distanceFromOrigin coords
 
 crossPoints :: Path -> Path -> [Coordinate]
-crossPoints firstPath secondPath = filter (\x -> x `elem` secondPath) firstPath
+crossPoints firstPath secondPath = elems $ intersection (fromList firstPath) (fromList secondPath)
 
 -- Use currying to create a path from origin function, by passing only one argument to the path function
 pathFromOrigin :: [Move] -> Path
