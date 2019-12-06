@@ -67,7 +67,7 @@ replaceNth (x:xs) n newVal
     | n == 0 = newVal:xs
     | otherwise = x:replaceNth xs (n-1) newVal
 
-getDigits :: Integral x => x -> [x]
+getDigits :: Int -> [Int]
 getDigits 0 = []
 getDigits x 
     | digitNumber < 5 = padZeroes digits
